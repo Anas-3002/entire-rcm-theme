@@ -215,37 +215,25 @@ add_shortcode( 'entire_rcm_calculator', 'entire_rcm_calculator_shortcode' );
 
 add_filter( 'wpcf7_autop_or_not', '__return_false' );
 
-function entire_rcm_form_attributes() {
+/**
+ * The id CF7 puts on the <form> element, so the design's own ids survive.
+ */
+function entire_rcm_form_id( $id ) {
 	$form = function_exists( 'wpcf7_get_current_contact_form' ) ? wpcf7_get_current_contact_form() : null;
 
-	$map = array(
-		13 => array(
-			'id'    => 'hero-quick-audit-form',
-			'class' => 'flex flex-col gap-space-sm pt-2 ercm-form',
-		),
-		14 => array(
-			'id'    => 'full-audit-booking-form',
-			'class' => 'space-y-4 max-w-2xl mx-auto ercm-form',
-		),
-		15 => array(
-			'id'    => 'footer-audit-form',
-			'class' => 'flex flex-col gap-2 ercm-form min-w-[280px]',
-		),
+	$ids = array(
+		13 => 'hero-quick-audit-form',
+		14 => 'full-audit-booking-form',
+		15 => 'footer-audit-form',
 	);
 
-	if ( ! $form || ! isset( $map[ $form->id() ] ) ) {
-		return '';
+	if ( ! $form || ! isset( $ids[ $form->id() ] ) ) {
+		return $id;
 	}
 
-	$entry = $map[ $form->id() ];
-
-	return sprintf(
-		'id="%s" data-ercm-form="%s"',
-		esc_attr( $entry['id'] ),
-		esc_attr( $entry['class'] )
-	);
+	return $ids[ $form->id() ];
 }
-add_filter( 'wpcf7_form_id_attr', 'entire_rcm_form_attributes' );
+add_filter( 'wpcf7_form_id_attr', 'entire_rcm_form_id', 10, 1 );
 
 function entire_rcm_form_classes( $class ) {
 	$form = function_exists( 'wpcf7_get_current_contact_form' ) ? wpcf7_get_current_contact_form() : null;
