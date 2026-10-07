@@ -243,21 +243,41 @@
 
 	/* ------------------------------------------- 6. Contact Form 7 hooks ---- */
 
+	// Contact Form 7 renders the <form> element itself, so a form is identified
+	// by the shortcode's own id (or the wrapper's data-wpcf7-id) rather than by
+	// anything the template declares.
+	var FORM_KEYS = {
+		13: 'hero-quick-audit-form',
+		14: 'full-audit-booking-form',
+		15: 'footer-audit-form'
+	};
+
+	function formKey( form ) {
+		if ( ! form ) {
+			return null;
+		}
+		if ( form.id ) {
+			return form.id;
+		}
+		var wrap = form.closest ? form.closest( '[data-wpcf7-id]' ) : null;
+		var fid = wrap ? wrap.getAttribute( 'data-wpcf7-id' ) : null;
+		return fid ? ( FORM_KEYS[ fid ] || null ) : null;
+	}
+
 	function initForms() {
 		document.addEventListener( 'wpcf7mailsent', function ( event ) {
-			var form = event.target.closest ? event.target.closest( '.ercm-form' ) : null;
-			if ( ! form ) {
-				return;
-			}
+			var target = event.target;
+			var form = target && target.closest ? target.closest( '.wpcf7-form' ) : null;
+			var key = formKey( form );
 
-			if ( form.id === 'hero-quick-audit-form' ) {
+			if ( key === 'hero-quick-audit-form' ) {
 				window.runQuickAuditCompute();
 				show( $( 'hero-quick-audit-success' ) );
 			}
-			if ( form.id === 'full-audit-booking-form' ) {
+			if ( key === 'full-audit-booking-form' ) {
 				show( $( 'booking-confirmation-alert' ), 'block' );
 			}
-			if ( form.id === 'footer-audit-form' ) {
+			if ( key === 'footer-audit-form' && form && form.parentNode ) {
 				if ( ! document.querySelector( '.ercm-footer-thanks' ) ) {
 					var span = document.createElement( 'span' );
 					span.className = 'ercm-footer-thanks text-label-sm font-label-sm text-tertiary-fixed';

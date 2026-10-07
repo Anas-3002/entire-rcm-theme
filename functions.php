@@ -205,6 +205,70 @@ function entire_rcm_calculator_shortcode( $atts ) {
 add_shortcode( 'entire_rcm_calculator', 'entire_rcm_calculator_shortcode' );
 
 /* -------------------------------------------------------------------------
+ * Contact Form 7: the design's form element.
+ *
+ * CF7 renders the <form> element itself — a template's own <form> tag becomes a
+ * nested, ignored form and its classes never reach the DOM. So the design's
+ * form-level classes and ids are attached to CF7's element here, and automatic
+ * paragraph insertion is switched off so the template's markup is used verbatim.
+ * ---------------------------------------------------------------------- */
+
+add_filter( 'wpcf7_autop_or_not', '__return_false' );
+
+function entire_rcm_form_attributes() {
+	$form = function_exists( 'wpcf7_get_current_contact_form' ) ? wpcf7_get_current_contact_form() : null;
+
+	$map = array(
+		13 => array(
+			'id'    => 'hero-quick-audit-form',
+			'class' => 'flex flex-col gap-space-sm pt-2 ercm-form',
+		),
+		14 => array(
+			'id'    => 'full-audit-booking-form',
+			'class' => 'space-y-4 max-w-2xl mx-auto ercm-form',
+		),
+		15 => array(
+			'id'    => 'footer-audit-form',
+			'class' => 'flex flex-col gap-2 ercm-form min-w-[280px]',
+		),
+	);
+
+	if ( ! $form || ! isset( $map[ $form->id() ] ) ) {
+		return '';
+	}
+
+	$entry = $map[ $form->id() ];
+
+	return sprintf(
+		'id="%s" data-ercm-form="%s"',
+		esc_attr( $entry['id'] ),
+		esc_attr( $entry['class'] )
+	);
+}
+add_filter( 'wpcf7_form_id_attr', 'entire_rcm_form_attributes' );
+
+function entire_rcm_form_classes( $class ) {
+	$form = function_exists( 'wpcf7_get_current_contact_form' ) ? wpcf7_get_current_contact_form() : null;
+	if ( ! $form ) {
+		return $class;
+	}
+
+	$classes = array(
+		13 => 'flex flex-col gap-space-sm pt-2 ercm-form',
+		14 => 'space-y-4 max-w-2xl mx-auto ercm-form',
+		15 => 'flex flex-col gap-2 ercm-form min-w-[280px]',
+	);
+
+	$id = $form->id();
+	if ( isset( $classes[ $id ] ) ) {
+		$class .= ' ' . $classes[ $id ];
+	}
+
+	return $class;
+}
+add_filter( 'wpcf7_form_class_attr', 'entire_rcm_form_classes', 10, 1 );
+
+/* -------------------------------------------------------------------------
  * Search and social metadata.
  * ---------------------------------------------------------------------- */
 
