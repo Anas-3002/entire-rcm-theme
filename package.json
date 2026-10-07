@@ -1,0 +1,24 @@
+{
+  "name": "theme",
+  "version": "1.0.0",
+  "description": "A child theme of **Twenty Twenty-Five** that carries the Entire RCM design system. It exists so the brand tokens live in one editable place and the pages can be built entirely from native Gutenberg blocks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anas-3002/entire-rcm-theme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Anas-3002/entire-rcm-theme/issues"
+  },
+  "homepage": "https://github.com/Anas-3002/entire-rcm-theme#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
