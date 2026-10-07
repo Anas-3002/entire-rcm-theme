@@ -10,9 +10,7 @@
 
 /* core/button: the design's classes sit on the block wrapper, so the anchor
    inside has to become a transparent, centred flex box. */
-.wp-block-button > .wp-block-button__link,
-.ercm-form input[type="submit"],
-.ercm-form button[type="submit"] {
+.wp-block-button > .wp-block-button__link {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -33,13 +31,6 @@
 	box-shadow: none;
 	-webkit-appearance: none;
 	appearance: none;
-}
-
-/* CF7's submit input carries the design's classes itself, so it keeps its own
-   padding and colours — reset only what WordPress injects. */
-.ercm-form input[type="submit"] {
-	display: inline-block;
-	width: auto;
 }
 
 /* Tailwind preflight leaves details/summary markers visible in WebKit. */

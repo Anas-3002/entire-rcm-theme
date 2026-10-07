@@ -23,6 +23,51 @@
 	}
 }
 
+/* Contact Form 7 sanitises class values on its own tags, so the form fields
+   reference these single-token component classes. Each one expands to the
+   design's own utilities — the rendered appearance is identical to the design's
+   hand-written markup. */
+@layer components {
+	.ercm-label {
+		@apply block font-label-md text-label-md text-on-surface mb-1;
+	}
+
+	.ercm-field {
+		@apply w-full bg-surface text-on-surface font-body-sm text-body-sm rounded-lg px-3.5 py-2.5
+		       shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/50
+		       placeholder:text-on-surface-variant;
+	}
+
+	.ercm-field-select {
+		@apply ercm-field appearance-none cursor-pointer;
+	}
+
+	.ercm-field-light {
+		@apply w-full bg-surface-container-lowest text-on-surface font-body-sm text-body-sm rounded-lg
+		       px-3.5 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary
+		       placeholder:text-on-surface-variant;
+	}
+
+	.ercm-field-range {
+		@apply w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-secondary;
+	}
+
+	.ercm-submit-cta {
+		@apply w-full py-4 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg shadow-md
+		       hover:bg-secondary hover:shadow-xl transition-all;
+	}
+
+	.ercm-submit-hero {
+		@apply mt-2 w-full py-3.5 px-4 rounded-lg bg-secondary text-on-secondary font-label-lg
+		       text-label-lg hover:bg-primary shadow-md hover:shadow-lg transition-all;
+	}
+
+	.ercm-submit-footer {
+		@apply w-full sm:w-auto whitespace-nowrap px-5 py-3 rounded-lg bg-secondary text-on-secondary
+		       font-label-md text-label-md shadow-md hover:bg-primary transition-all;
+	}
+}
+
 ::-webkit-scrollbar {
 	display: none;
 }
