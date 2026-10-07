@@ -1,0 +1,584 @@
+/*!
+ * Entire RCM — front-end utilities.
+ *
+ * Only the things theme.json and core block attributes cannot express:
+ * block-style variants, the accordion marker, form chrome, the sticky-header
+ * offset and the interactive calculator's chrome. All layout and content lives
+ * in Gutenberg blocks.
+ */
+
+:root {
+	--ercm-border: var(--wp--preset--color--border, #e0e4f6);
+	--ercm-navy: var(--wp--preset--color--navy, #122056);
+	--ercm-indigo: var(--wp--preset--color--indigo, #5b65dc);
+	--ercm-tint: var(--wp--preset--color--tint, #eeeefd);
+	--ercm-muted: var(--wp--preset--color--muted, #4b5563);
+	--ercm-shadow-card: 0 1px 3px 0 rgba(18, 32, 86, 0.04), 0 1px 2px -1px rgba(18, 32, 86, 0.04);
+	--ercm-shadow-hover: 0 10px 15px -3px rgba(18, 32, 86, 0.06), 0 4px 6px -4px rgba(18, 32, 86, 0.03);
+	--ercm-shadow-float: 0 20px 25px -5px rgba(18, 32, 86, 0.1), 0 8px 10px -6px rgba(18, 32, 86, 0.04);
+	--ercm-header-offset: 96px;
+}
+
+html {
+	scroll-behavior: smooth;
+	-webkit-text-size-adjust: 100%;
+}
+
+/* Anchor targets must clear the sticky header. */
+[id] {
+	scroll-margin-top: var(--ercm-header-offset);
+}
+
+body {
+	/* `clip` rather than `hidden`: it contains stray overflow without creating
+	   the scroll container that would break the sticky header. */
+	overflow-x: clip;
+}
+
+/* ---------------------------------------------------------------- headings */
+
+h1, h2, h3, h4, h5, h6,
+.wp-block-heading {
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------- block styles */
+
+.is-style-ercm-card {
+	background-color: #fff;
+	border: 1px solid var(--ercm-border);
+	border-radius: 0.75rem;
+	padding: 1.5rem;
+	box-shadow: var(--ercm-shadow-card);
+}
+
+.is-style-ercm-card-elevated {
+	background-color: #fff;
+	border: 1px solid var(--ercm-border);
+	border-radius: 0.75rem;
+	padding: 1.5rem;
+	box-shadow: var(--ercm-shadow-card);
+	transition: box-shadow 150ms ease, transform 150ms ease, border-color 150ms ease;
+}
+
+.is-style-ercm-card-elevated:hover {
+	box-shadow: var(--ercm-shadow-hover);
+	transform: translateY(-1px);
+	border-color: #ccd3f0;
+}
+
+.is-style-ercm-tint-panel {
+	background-image: linear-gradient(135deg, #eeeefd 0%, #ffffff 100%);
+	border: 1px solid var(--ercm-border);
+	border-radius: 0.75rem;
+}
+
+.is-style-ercm-outline-panel {
+	background-color: #fff;
+	border: 1px solid var(--ercm-border);
+	border-radius: 0.75rem;
+}
+
+.is-style-ercm-dark-panel {
+	background-image: linear-gradient(160deg, #122056 0%, #1b2a6b 60%, #26347e 100%);
+	color: #fff;
+	border-radius: 1rem;
+}
+
+.is-style-ercm-dark-panel .wp-block-heading,
+.is-style-ercm-dark-panel h1,
+.is-style-ercm-dark-panel h2,
+.is-style-ercm-dark-panel h3,
+.is-style-ercm-dark-panel h4 {
+	color: #fff;
+}
+
+.is-style-ercm-pill {
+	border-radius: 9999px;
+}
+
+.is-style-ercm-badge {
+	background-color: var(--ercm-tint);
+	border: 1px solid var(--ercm-border);
+	border-radius: 9999px;
+	padding: 0.3rem 0.75rem;
+}
+
+.is-style-ercm-badge p,
+.is-style-ercm-badge {
+	font-size: 0.6875rem;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--ercm-navy);
+}
+
+.is-style-ercm-tabular,
+.is-style-ercm-tabular p,
+.wp-block-paragraph.is-style-ercm-tabular {
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum" 1;
+}
+
+.wp-block-paragraph.is-style-ercm-eyebrow {
+	font-family: var(--wp--preset--font-family--jakarta, sans-serif);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	line-height: 1.4;
+}
+
+.is-style-ercm-cta-light .wp-block-button__link {
+	background-color: #fff;
+	color: var(--ercm-navy);
+	border-color: #fff;
+}
+
+.is-style-ercm-cta-light .wp-block-button__link:hover {
+	background-color: var(--ercm-tint);
+	color: var(--ercm-navy);
+}
+
+.is-style-ercm-ghost .wp-block-button__link {
+	background-color: transparent;
+	color: #fff;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.is-style-ercm-ghost .wp-block-button__link:hover {
+	background-color: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	border-color: #fff;
+}
+
+.is-style-ercm-pill .wp-block-button__link,
+.wp-block-button.is-style-ercm-pill .wp-block-button__link {
+	border-radius: 9999px;
+}
+
+.is-style-ercm-emerald .wp-block-button__link {
+	background-color: var(--wp--preset--color--emerald, #10b981);
+	color: #fff;
+	border-color: var(--wp--preset--color--emerald, #10b981);
+}
+
+/* ------------------------------------------------------- check-style lists */
+
+.wp-block-list.is-style-ercm-check {
+	list-style: none;
+	padding-left: 0;
+}
+
+.wp-block-list.is-style-ercm-check li {
+	position: relative;
+	padding-left: 1.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.wp-block-list.is-style-ercm-check li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.3em;
+	width: 1.0625rem;
+	height: 1.0625rem;
+	border-radius: 9999px;
+	background-color: rgba(16, 185, 129, 0.14);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230B7A55' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 0.75rem 0.75rem;
+}
+
+/* --------------------------------------------------- accordion (core/details) */
+
+.wp-block-details {
+	overflow: hidden;
+}
+
+.wp-block-details + .wp-block-details {
+	margin-top: 0.75rem;
+}
+
+.wp-block-details > summary {
+	cursor: pointer;
+	list-style: none;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	font-family: var(--wp--preset--font-family--jakarta, sans-serif);
+	font-size: 1.0625rem;
+	font-weight: 600;
+	line-height: 1.45;
+	color: var(--ercm-navy);
+}
+
+.wp-block-details > summary::-webkit-details-marker {
+	display: none;
+}
+
+.wp-block-details > summary::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 1.5rem;
+	height: 1.5rem;
+	margin-top: 0.05rem;
+	border-radius: 9999px;
+	background-color: var(--ercm-tint);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23122056' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M10 5v10M5 10h10'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 0.8rem 0.8rem;
+	transition: transform 150ms ease;
+}
+
+.wp-block-details[open] > summary::after {
+	transform: rotate(45deg);
+}
+
+.wp-block-details > *:not(summary) {
+	margin-top: 0.875rem;
+}
+
+/* ------------------------------------------------------------------- forms */
+
+.wpcf7 form,
+.ercm-form .wpcf7 {
+	margin: 0;
+}
+
+.wpcf7 form p {
+	margin-bottom: 1rem;
+}
+
+.wpcf7 label {
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--ercm-muted);
+	margin-bottom: 0.375rem;
+}
+
+.wpcf7 input[type="text"],
+.wpcf7 input[type="email"],
+.wpcf7 input[type="tel"],
+.wpcf7 input[type="number"],
+.wpcf7 input[type="url"],
+.wpcf7 select,
+.wpcf7 textarea {
+	width: 100%;
+	background-color: #fff;
+	border: 1px solid var(--ercm-border);
+	border-radius: 0.5rem;
+	padding: 0.7rem 0.875rem;
+	font-size: 0.9375rem;
+	line-height: 1.4;
+	color: var(--ercm-navy);
+	transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.wpcf7 input:focus,
+.wpcf7 select:focus,
+.wpcf7 textarea:focus {
+	outline: none;
+	border-color: var(--ercm-indigo);
+	box-shadow: 0 0 0 3px rgba(91, 101, 220, 0.15);
+}
+
+.wpcf7 ::placeholder {
+	color: var(--ercm-muted);
+	opacity: 0.6;
+}
+
+.wpcf7 input[type="submit"] {
+	width: auto;
+	cursor: pointer;
+	background-color: var(--ercm-navy);
+	color: #fff;
+	border: 1px solid var(--ercm-navy);
+	border-radius: 0.5rem;
+	padding: 0.85rem 1.75rem;
+	font-family: var(--wp--preset--font-family--jakarta, sans-serif);
+	font-size: 0.9375rem;
+	font-weight: 700;
+	transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.wpcf7 input[type="submit"]:hover {
+	background-color: var(--ercm-indigo);
+	border-color: var(--ercm-indigo);
+}
+
+.wpcf7-spinner {
+	margin: 0 0 0 0.75rem;
+}
+
+.wpcf7 form .wpcf7-response-output {
+	margin: 1.25rem 0 0;
+	padding: 0.875rem 1.125rem;
+	border-radius: 0.5rem;
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--ercm-border);
+	background-color: #fff;
+	font-size: 0.875rem;
+}
+
+.wpcf7 form.sent .wpcf7-response-output {
+	border-color: rgba(16, 185, 129, 0.5);
+	background-color: rgba(16, 185, 129, 0.08);
+	color: #0b7a55;
+}
+
+.wpcf7 form.invalid .wpcf7-response-output,
+.wpcf7 form.failed .wpcf7-response-output,
+.wpcf7 form.aborted .wpcf7-response-output {
+	border-color: rgba(180, 35, 24, 0.4);
+	background-color: rgba(180, 35, 24, 0.06);
+	color: #b42318;
+}
+
+.wpcf7-not-valid-tip {
+	font-size: 0.75rem;
+	color: #b42318;
+	margin-top: 0.25rem;
+}
+
+.wpcf7 form .wpcf7-list-item {
+	margin-left: 0;
+}
+
+/* Dark sections: lighten the form chrome. */
+.ercm-form-dark .wpcf7 label {
+	color: rgba(255, 255, 255, 0.72);
+}
+
+.ercm-form-dark .wpcf7 input[type="submit"] {
+	background-color: #fff;
+	color: var(--ercm-navy);
+	border-color: #fff;
+}
+
+.ercm-form-dark .wpcf7 input[type="submit"]:hover {
+	background-color: var(--ercm-tint);
+	border-color: var(--ercm-tint);
+}
+
+/* ------------------------------------------------------- header behaviour */
+
+.ercm-site-header {
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	transition: box-shadow 180ms ease;
+}
+
+.ercm-site-header.is-stuck {
+	box-shadow: 0 6px 18px -6px rgba(18, 32, 86, 0.12);
+}
+
+.ercm-site-header .wp-block-navigation-item__content {
+	padding: 0.25rem 0;
+}
+
+/* ------------------------------------------------------------- calculator */
+
+.ercm-calc {
+	border-radius: 1rem;
+	background-color: #fff;
+	border: 1px solid var(--ercm-border);
+	box-shadow: var(--ercm-shadow-float);
+	padding: 1.75rem;
+}
+
+.ercm-calc__row + .ercm-calc__row {
+	margin-top: 1.5rem;
+}
+
+.ercm-calc__label {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 1rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--ercm-muted);
+	margin-bottom: 0.5rem;
+}
+
+.ercm-calc__value {
+	font-family: var(--wp--preset--font-family--jakarta, sans-serif);
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--ercm-navy);
+	font-variant-numeric: tabular-nums;
+}
+
+.ercm-calc input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 0.375rem;
+	border-radius: 9999px;
+	background-color: var(--ercm-tint);
+	outline: none;
+}
+
+.ercm-calc input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 1.25rem;
+	height: 1.25rem;
+	border-radius: 9999px;
+	background-color: var(--ercm-indigo);
+	border: 3px solid #fff;
+	box-shadow: 0 1px 4px rgba(18, 32, 86, 0.3);
+	cursor: pointer;
+}
+
+.ercm-calc input[type="range"]::-moz-range-thumb {
+	width: 1.25rem;
+	height: 1.25rem;
+	border-radius: 9999px;
+	background-color: var(--ercm-indigo);
+	border: 3px solid #fff;
+	cursor: pointer;
+}
+
+.ercm-calc__out {
+	margin-top: 1.75rem;
+	border-radius: 0.75rem;
+	background-image: linear-gradient(160deg, #122056 0%, #1b2a6b 100%);
+	color: #fff;
+	padding: 1.5rem;
+}
+
+.ercm-calc__out-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 1.25rem;
+}
+
+.ercm-calc__out-label {
+	font-size: 0.6875rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.66);
+	margin: 0 0 0.25rem;
+}
+
+.ercm-calc__out-value {
+	font-family: var(--wp--preset--font-family--jakarta, sans-serif);
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1.2;
+	font-variant-numeric: tabular-nums;
+	margin: 0;
+}
+
+.ercm-calc__note {
+	font-size: 0.75rem;
+	line-height: 1.5;
+	color: rgba(255, 255, 255, 0.62);
+	margin: 1.25rem 0 0;
+}
+
+/* --------------------------------------------------------- small helpers */
+
+.ercm-stack-mobile {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.ercm-hairline {
+	height: 1px;
+	background-color: var(--ercm-border);
+	border: 0;
+}
+
+.ercm-marquee {
+	overflow: hidden;
+	position: relative;
+}
+
+.ercm-fade-x {
+	-webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+	mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ercm-shadow-card { box-shadow: var(--ercm-shadow-card); }
+.ercm-shadow-float { box-shadow: var(--ercm-shadow-float); }
+.ercm-tabular { font-variant-numeric: tabular-nums; }
+
+.ercm-link-plain a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ercm-link-plain a:hover {
+	color: var(--ercm-indigo);
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 781px) {
+	:root {
+		--ercm-header-offset: 120px;
+	}
+
+	.ercm-hide-mobile {
+		display: none !important;
+	}
+
+	.ercm-calc {
+		padding: 1.25rem;
+	}
+
+	.ercm-calc__out {
+		padding: 1.25rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	.is-style-ercm-card-elevated,
+	.wp-block-details > summary::after,
+	.ercm-site-header {
+		transition: none;
+	}
+
+	.is-style-ercm-card-elevated:hover {
+		transform: none;
+	}
+}
+
+/* Keyboard focus never disappears. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+	outline: 3px solid rgba(91, 101, 220, 0.45);
+	outline-offset: 2px;
+	border-radius: 0.25rem;
+}
+
+/* Print: keep it readable. */
+@media print {
+	.ercm-site-header,
+	.ercm-hide-print {
+		display: none !important;
+	}
+}

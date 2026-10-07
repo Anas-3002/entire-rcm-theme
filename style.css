@@ -1,0 +1,16 @@
+/*
+Theme Name: Entire RCM
+Theme URI: https://maroon-mallard-142870.hostingersite.com/
+Description: Brand child theme of Twenty Twenty-Five carrying the Entire RCM design tokens (Plus Jakarta Sans + Inter, brand palette, component radii/shadows) and the shared stylesheet used by the Gutenberg-built pages.
+Author: Entire RCM
+Template: twentytwentyfive
+Version: 1.0.0
+Requires at least: 6.6
+Tested up to: 6.8
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: entire-rcm
+*/
+
+/* All design tokens live in theme.json. This file is intentionally minimal. */
