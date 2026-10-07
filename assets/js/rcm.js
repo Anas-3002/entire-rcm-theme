@@ -136,20 +136,20 @@
 	/* -------------------------------------------- 4. pricing volume toggle - */
 
 	var RATES = {
-		percent: [ '6.5%', '4.8%', 'Custom %' ],
-		flat: [ '$1,850 / mo', '$4,400 / mo', 'Custom Scope' ]
+		standard: [ '4.2%', '4.8%', 'Custom %' ],
+		growth: [ '3.8%', '4.4%', '2.9% - 3.5%' ]
 	};
 
-	window.setPricingScale = function ( plan ) {
+	window.setPricingScale = function ( scale ) {
 		document.querySelectorAll( '.ercm-price-toggle' ).forEach( function ( btn ) {
-			var active = btn.getAttribute( 'data-plan' ) === plan;
+			var active = btn.getAttribute( 'data-scale' ) === scale;
 			btn.classList.toggle( 'bg-surface-container-lowest', active );
 			btn.classList.toggle( 'text-primary', active );
 			btn.classList.toggle( 'shadow-sm', active );
 			btn.classList.toggle( 'text-on-surface-variant', ! active );
 		} );
 
-		var rates = RATES[ plan ] || RATES.percent;
+		var rates = RATES[ scale ] || RATES.standard;
 		[ 1, 2, 3 ].forEach( function ( i ) {
 			var el = $( 'tier-' + i + '-rate' );
 			if ( el ) {
@@ -166,7 +166,7 @@
 			item.addEventListener( 'toggle', function () {
 				var icon = item.querySelector( '.ercm-faq-icon' );
 				if ( icon ) {
-					icon.textContent = item.open ? 'expand_less' : 'expand_more';
+					icon.textContent = item.open ? 'remove' : 'add';
 				}
 				if ( item.open ) {
 					items.forEach( function ( other ) {
@@ -224,7 +224,7 @@
 
 		document.querySelectorAll( '.ercm-price-toggle' ).forEach( function ( btn ) {
 			btn.addEventListener( 'click', function () {
-				window.setPricingScale( btn.getAttribute( 'data-plan' ) || 'percent' );
+				window.setPricingScale( btn.getAttribute( 'data-scale' ) || 'standard' );
 			} );
 		} );
 

@@ -28,10 +28,12 @@ module.exports = {
     ],
     extract: {
       // Contact Form 7 spells utility classes as `class:py-3.5`; strip the
-      // prefix so the utilities are still compiled.
+      // prefix so the utilities are still compiled. Split on whitespace and
+      // quotes only — arbitrary values like `max-w-[1440px]` and
+      // `shadow-[0_1px_8px_rgba(0,0,0,0.04)]` contain brackets and commas.
       py: ( content ) => content
         .replace( /class:/g, " " )
-        .split( /[\s"'`;<>{}()[\]=,+]+/ )
+        .split( /[\s"']+/ )
         .filter( Boolean ),
     },
   },
