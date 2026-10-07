@@ -67,12 +67,16 @@ add_filter( 'body_class', 'entire_rcm_body_class' );
 
 /**
  * Drop WordPress's own block styling: every class in the design is a compiled
- * Tailwind utility and the core sheet's margins and layout rules fight it.
+ * Tailwind utility, and the parent theme's merged theme.json styles (Manrope
+ * body copy at 36px/300, root padding, preset sizes) would win over the design's
+ * utilities on anything that inherits. The block contents carry their own
+ * typography, so nothing here depends on the global stylesheet.
  */
 function entire_rcm_dequeue_block_styles() {
 	wp_dequeue_style( 'wp-block-library' );
 	wp_dequeue_style( 'wp-block-library-theme' );
 	wp_dequeue_style( 'classic-theme-styles' );
+	wp_dequeue_style( 'global-styles' );
 }
 add_action( 'wp_enqueue_scripts', 'entire_rcm_dequeue_block_styles', 100 );
 
