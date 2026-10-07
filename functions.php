@@ -215,3 +215,190 @@ function entire_rcm_inline_config() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'entire_rcm_inline_config', 20 );
+
+/* ---------------------------------------------------------------------------
+ * Search and social metadata.
+ *
+ * Deliberately dependency-free: a marketing site of this size does not need an
+ * SEO plugin's weight, and everything here is derived from content the editors
+ * already control (page excerpt, page title, post categories, the FAQ block).
+ * ------------------------------------------------------------------------ */
+
+/**
+ * A usable description for any singular view.
+ */
+function entire_rcm_meta_description() {
+	$fallback = get_bloginfo( 'description' );
+
+	if ( is_singular() ) {
+		$post = get_queried_object();
+		if ( $post instanceof WP_Post ) {
+			$excerpt = has_excerpt( $post ) ? get_the_excerpt( $post ) : '';
+			if ( ! $excerpt ) {
+				$excerpt = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
+			}
+			$excerpt = trim( preg_replace( '/\s+/', ' ', $excerpt ) );
+			if ( '' !== $excerpt ) {
+				return wp_html_excerpt( $excerpt, 155, '…' );
+			}
+		}
+	}
+
+	return $fallback;
+}
+
+/**
+ * Front page title reads as the brand promise rather than "Home – Site".
+ */
+function entire_rcm_document_title( $parts ) {
+	if ( is_front_page() ) {
+		$parts['title'] = get_bloginfo( 'name' ) . ' — ' . get_bloginfo( 'description' );
+		unset( $parts['tagline'] );
+	}
+	return $parts;
+}
+add_filter( 'document_title_parts', 'entire_rcm_document_title' );
+
+/**
+ * Description, Open Graph and Twitter card tags.
+ */
+function entire_rcm_meta_tags() {
+	$desc  = entire_rcm_meta_description();
+	$title = wp_get_document_title();
+	$url   = is_singular() ? get_permalink() : home_url( add_query_arg( array(), $GLOBALS['wp']->request ) );
+	if ( is_front_page() ) {
+		$url = home_url( '/' );
+	}
+
+	$image = '';
+	if ( is_singular() && has_post_thumbnail() ) {
+		$image = get_the_post_thumbnail_url( null, 'full' );
+	}
+	if ( ! $image ) {
+		$logo_id = get_theme_mod( 'custom_logo' );
+		if ( $logo_id ) {
+			$image = wp_get_attachment_image_url( $logo_id, 'full' );
+		}
+	}
+
+	echo "\n";
+	printf( '<meta name="description" content="%s" />' . "\n", esc_attr( $desc ) );
+	printf( '<meta property="og:type" content="%s" />' . "\n", is_singular( 'post' ) ? 'article' : 'website' );
+	printf( '<meta property="og:title" content="%s" />' . "\n", esc_attr( $title ) );
+	printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $desc ) );
+	printf( '<meta property="og:url" content="%s" />' . "\n", esc_url( $url ) );
+	printf( '<meta property="og:site_name" content="%s" />' . "\n", esc_attr( get_bloginfo( 'name' ) ) );
+	if ( $image ) {
+		printf( '<meta property="og:image" content="%s" />' . "\n", esc_url( $image ) );
+	}
+	printf( '<meta name="twitter:card" content="%s" />' . "\n", $image ? 'summary_large_image' : 'summary' );
+	printf( '<meta name="twitter:title" content="%s" />' . "\n", esc_attr( $title ) );
+	printf( '<meta name="twitter:description" content="%s" />' . "\n", esc_attr( $desc ) );
+}
+add_action( 'wp_head', 'entire_rcm_meta_tags', 2 );
+
+/**
+ * FAQ pairs, pulled out of the rendered accordion so the structured data can
+ * never drift from the visible question and answer.
+ */
+function entire_rcm_extract_faqs( $html ) {
+	$faqs = array();
+	if ( ! preg_match_all( '#<details\b[^>]*>(.*?)</details>#is', $html, $matches ) ) {
+		return $faqs;
+	}
+	foreach ( $matches[1] as $chunk ) {
+		if ( ! preg_match( '#<summary[^>]*>(.*?)</summary>#is', $chunk, $q ) ) {
+			continue;
+		}
+		$question = trim( wp_strip_all_tags( $q[1] ) );
+		$answer   = trim( wp_strip_all_tags( preg_replace( '#<summary[^>]*>.*?</summary>#is', '', $chunk ) ) );
+		$answer   = trim( preg_replace( '/\s+/', ' ', $answer ) );
+		if ( '' !== $question && '' !== $answer ) {
+			$faqs[] = array( $question, $answer );
+		}
+	}
+	return $faqs;
+}
+
+/**
+ * JSON-LD: Organization everywhere, WebSite + FAQPage on the front page,
+ * BlogPosting on articles.
+ */
+function entire_rcm_json_ld() {
+	$graph = array();
+
+	$graph[] = array(
+		'@type'       => 'Organization',
+		'@id'         => home_url( '/#organization' ),
+		'name'        => get_bloginfo( 'name' ),
+		'description' => get_bloginfo( 'description' ),
+		'url'         => home_url( '/' ),
+		'email'       => get_option( 'admin_email' ),
+		'areaServed'  => array( '@type' => 'Country', 'name' => 'United States' ),
+		'knowsAbout'  => array( 'Medical billing', 'Revenue cycle management',
+			'Medical coding', 'Denial management', 'Prior authorisation' ),
+	);
+
+	if ( is_front_page() ) {
+		$graph[] = array(
+			'@type'     => 'WebSite',
+			'@id'       => home_url( '/#website' ),
+			'url'       => home_url( '/' ),
+			'name'      => get_bloginfo( 'name' ),
+			'publisher' => array( '@id' => home_url( '/#organization' ) ),
+			'inLanguage' => get_bloginfo( 'language' ),
+		);
+
+		$faqs = array();
+		if ( is_singular() ) {
+			$post = get_queried_object();
+			if ( $post instanceof WP_Post ) {
+				$faqs = entire_rcm_extract_faqs( $post->post_content );
+			}
+		}
+		if ( $faqs ) {
+			$graph[] = array(
+				'@type'      => 'FAQPage',
+				'@id'        => home_url( '/#faq' ),
+				'mainEntity' => array_map(
+					function ( $pair ) {
+						return array(
+							'@type'          => 'Question',
+							'name'           => $pair[0],
+							'acceptedAnswer' => array( '@type' => 'Answer', 'text' => $pair[1] ),
+						);
+					},
+					$faqs
+				),
+			);
+		}
+	}
+
+	if ( is_singular( 'post' ) ) {
+		$post     = get_queried_object();
+		$graph[]  = array(
+			'@type'         => 'BlogPosting',
+			'@id'           => get_permalink() . '#article',
+			'headline'      => get_the_title(),
+			'description'   => entire_rcm_meta_description(),
+			'datePublished' => get_the_date( DATE_W3C ),
+			'dateModified'  => get_the_modified_date( DATE_W3C ),
+			'mainEntityOfPage' => get_permalink(),
+			'author'        => array( '@type' => 'Organization', 'name' => get_bloginfo( 'name' ) ),
+			'publisher'     => array( '@id' => home_url( '/#organization' ) ),
+			'inLanguage'    => get_bloginfo( 'language' ),
+		);
+		if ( has_post_thumbnail() ) {
+			$graph[ count( $graph ) - 1 ]['image'] = get_the_post_thumbnail_url( null, 'full' );
+		}
+	}
+
+	if ( ! $graph ) {
+		return;
+	}
+
+	echo '<script type="application/ld+json">'
+		. wp_json_encode( array( '@context' => 'https://schema.org', '@graph' => $graph ) )
+		. '</script>' . "\n";
+}
+add_action( 'wp_head', 'entire_rcm_json_ld', 5 );
